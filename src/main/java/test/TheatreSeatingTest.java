@@ -15,6 +15,63 @@ public class TheatreSeatingTest {
 		assertNotNull(status);
 		assertTrue("successfully proccessed the input request".equalsIgnoreCase(status));
 	}
+	
+	@Test
+	public void UnhappyPathtestingWithNullLayout() {
+		TheatreSeating service = new TheatreSeating();
+		String status = service.theatreSeatingRequest(mockNullLayout(), mockTicketRequests());
+		assertNotNull(status);
+		assertTrue("Invalid Request Received".equalsIgnoreCase(status));
+	}
+	
+	@Test
+	public void UnhappyPathtestingWithNullTicketRequests() {
+		TheatreSeating service = new TheatreSeating();
+		String status = service.theatreSeatingRequest(mockLayout(), mockNullTicketRequests());
+		assertNotNull(status);
+		assertTrue("Invalid Request Received".equalsIgnoreCase(status));
+	}
+	
+	@Test
+	public void UnhappyPathtestingWithEmptyRequest() {
+		TheatreSeating service = new TheatreSeating();
+		String status = service.theatreSeatingRequest(mockNullLayout(), mockNullTicketRequests());
+		assertNotNull(status);
+		assertTrue("Invalid Request Received".equalsIgnoreCase(status));
+	}
+
+	@Test
+	public void UnhappyPathtestingTicktRequestsNFE() throws IndexOutOfBoundsException {
+		TheatreSeating service = new TheatreSeating();
+		StringBuilder ticketRequests = new StringBuilder();
+		ticketRequests.append("Smith s2");
+		ticketRequests.append(System.getProperty("line.separator"));
+		ticketRequests.append("Jones 5");
+		String status = service.theatreSeatingRequest(mockLayout(), ticketRequests);
+		assertNull(status);
+	}
+	
+	@Test
+	public void UnhappyPathtestingTicketRequestsIBE() throws IndexOutOfBoundsException {
+		TheatreSeating service = new TheatreSeating();
+		StringBuilder ticketRequests = new StringBuilder();
+		ticketRequests.append("Smith");
+		ticketRequests.append(System.getProperty("line.separator"));
+		ticketRequests.append("Jones 5");
+		String status = service.theatreSeatingRequest(mockLayout(), ticketRequests);
+		assertNull(status);
+	}
+	
+	@Test
+	public void UnhappyPathtestingLayoutNFE() throws IndexOutOfBoundsException {
+		TheatreSeating service = new TheatreSeating();
+		StringBuilder layout = new StringBuilder();
+		layout.append("6a 6");
+		layout.append(System.getProperty("line.separator"));
+		layout.append("3 5 5 3");
+		String status = service.theatreSeatingRequest(layout, mockTicketRequests());
+		assertNull(status);
+	}
 
 	
 	public StringBuilder mockLayout() {
@@ -48,6 +105,18 @@ public class TheatreSeatingTest {
 		ticketRequests.append("Miller 12");
 		return ticketRequests;
 		
+	}
+	
+	public StringBuilder mockNullLayout() {
+		StringBuilder layout = new StringBuilder();
+		
+		return layout;
+	}
+	
+	public StringBuilder mockNullTicketRequests() {
+		StringBuilder ticketRequests = new StringBuilder();
+		
+		return ticketRequests;
 	}
 
 }

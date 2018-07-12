@@ -1,5 +1,6 @@
 package com.codingtest.theaterseating.main;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -32,7 +33,7 @@ public class TheatreSeating {
 			}
 		}
 		input.close();
-		System.out.println("LAout :" +layout.toString());
+		System.out.println("Layout :" +layout.toString());
 		TheatreSeating handleRequests = new TheatreSeating();
 		String status = handleRequests.theatreSeatingRequest(layout, ticketRequests);
 		System.out.println(status);
@@ -43,13 +44,22 @@ public class TheatreSeating {
 
 		String status = null;
 		TheaterSeatingServiceImpl service = new TheaterSeatingServiceImpl();
+		TheaterLayout theaterLayout = new TheaterLayout();
+		List<TheaterRequest> requests = new ArrayList<TheaterRequest>();
 		try {
-			TheaterLayout theaterLayout = service.getTheaterLayout(layout.toString());
-			List<TheaterRequest> requests = service.getTicketRequests(ticketRequests.toString());
+			if(layout.length() > 0 && ticketRequests.length() > 0) {
+			theaterLayout = service.getTheaterLayout(layout.toString());
+			requests = service.getTicketRequests(ticketRequests.toString());
 			status = service.processTicketRequests(theaterLayout, requests);
+			} else {
+				status = "Invalid Request Received";
+			}
+			
 		} catch (NumberFormatException nfe) {
 			System.out.println(nfe.getMessage());
-		} catch (Exception e) {
+		} catch (IndexOutOfBoundsException ibe) {
+			System.out.println(ibe.getMessage());
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		return status;

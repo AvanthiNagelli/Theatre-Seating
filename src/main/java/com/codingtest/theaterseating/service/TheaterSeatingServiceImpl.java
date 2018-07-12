@@ -14,7 +14,7 @@ import com.codingtest.theaterseating.model.TheaterSection;
 public class TheaterSeatingServiceImpl implements TheaterSeatingService {
 
     @Override
-    public TheaterLayout getTheaterLayout(String rowLayout) throws NumberFormatException{
+    public TheaterLayout getTheaterLayout(String rowLayout) throws NumberFormatException,IndexOutOfBoundsException{
         
         TheaterLayout theaterLayout = new TheaterLayout();
         TheaterSection section;
@@ -35,8 +35,11 @@ public class TheaterSeatingServiceImpl implements TheaterSeatingService {
                     
                 }catch(NumberFormatException nfe){
                     
-                    throw new NumberFormatException("'" + sections[j] + "'" + " is invalid section capacity.");
+                    throw new NumberFormatException("'" + sections[j] + "'" + " is invalid section capacity. Number Format Error");
                     
+                }catch(IndexOutOfBoundsException ibe) {
+            	
+            	throw new IndexOutOfBoundsException("Invalid Layout Received. Index out of Bounds");
                 }
                 
                 totalCapacity = totalCapacity + value;
@@ -62,33 +65,38 @@ public class TheaterSeatingServiceImpl implements TheaterSeatingService {
     }
 
     @Override
-    public List<TheaterRequest> getTicketRequests(String ticketRequests) throws NumberFormatException{
+    public List<TheaterRequest> getTicketRequests(String ticketRequests) throws NumberFormatException,IndexOutOfBoundsException{
         
         List<TheaterRequest> requestsList = new ArrayList<TheaterRequest>();
         TheaterRequest request;
-        
+        if(ticketRequests.length() > 0) {
+        	
         String[] requests = ticketRequests.split(System.lineSeparator());
-        
-        for(String r : requests){
-            
-            String[] rData = r.split(" ");
-            
-            request = new TheaterRequest();
-            
-            request.setName(rData[0]);
-            
-            try{
-            
-                request.setNoOfTickets(Integer.valueOf(rData[1]));
-                
-            }catch(NumberFormatException nfe){
-                
-                throw new NumberFormatException("'" + rData[1] + "'" + " is invalid ticket request.");
-            }
-            request.setCompleted(false);
-            
-            requestsList.add(request);
-            
+       
+	        for(String r : requests) {
+	            
+	            String[] rData = r.split(" ");
+	            
+	            request = new TheaterRequest();
+	            
+	            request.setName(rData[0]);
+	            
+	            try{
+	            
+	                request.setNoOfTickets(Integer.valueOf(rData[1]));
+	                
+	            }catch(NumberFormatException nfe){
+	                
+	                throw new NumberFormatException("'" + rData[1] + "'" + " is invalid ticket request. Number Format Error");
+	            }catch(IndexOutOfBoundsException ibe) {
+	            	
+	            	throw new IndexOutOfBoundsException("Invalid ticket request. Index out of Bounds");
+	            }
+	            request.setCompleted(false);
+	            
+	            requestsList.add(request);
+	            
+	        }
         }
         
         return requestsList;
@@ -255,11 +263,11 @@ public class TheaterSeatingServiceImpl implements TheaterSeatingService {
                         
                         if(sectionNo >= 0){
                             
-                            TheaterSection perferctSection = sections.get(sectionNo);
+                            TheaterSection matchingSectionFinder = sections.get(sectionNo);
                             
-                            request.setRowNumber(perferctSection.getRowNumber());
-                            request.setSectionNumber(perferctSection.getSectionNumber());
-                            perferctSection.setAvailableSeats(perferctSection.getAvailableSeats() - request.getNoOfTickets());
+                            request.setRowNumber(matchingSectionFinder.getRowNumber());
+                            request.setSectionNumber(matchingSectionFinder.getSectionNumber());
+                            matchingSectionFinder.setAvailableSeats(matchingSectionFinder.getAvailableSeats() - request.getNoOfTickets());
                             layout.setAvailableSeats(layout.getAvailableSeats() - request.getNoOfTickets());
                             request.setCompleted(true);
                             break;
